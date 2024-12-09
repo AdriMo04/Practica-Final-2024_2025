@@ -1,5 +1,5 @@
 package model;
 
-public interface iExporter {
+public interface IExporter {
 
 }
