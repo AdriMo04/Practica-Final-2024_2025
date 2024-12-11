@@ -80,7 +80,7 @@ public class InteractiveView extends BaseView{
             int duracion = Esdia.readInt("Duración estimada (minutos): ");
             
             Task task = new Task (0, titulo, new Date(), descripcion, prioridad, duracion, false);
-            //controller.
+            controller.addTask(task);
 
             showMessage("Tarea creada con éxito.");
         } catch (Exception e) {
@@ -92,7 +92,7 @@ public class InteractiveView extends BaseView{
         System.out.println("\nTareas pendientes (ordenadas por prioridad):");
 
         try {
-            List<Task> tasks = //controller.
+            List<Task> tasks = controller.getPendingTasks();
 
             if (tasks.isEmpty()) {
                 showMessage("No hay tareas pendientes.");
@@ -108,7 +108,7 @@ public class InteractiveView extends BaseView{
         System.out.println("\nHistorial completo de tareas:");
 
         try {
-            List<Task> tasks = //controller
+            List<Task> tasks = controller.getAllTasks();
 
             if (tasks.isEmpty()) {
                 showMessage("No hay tareas registradas.");
@@ -126,7 +126,7 @@ public class InteractiveView extends BaseView{
         try {
             int id = Esdia.readInt("Ingrese el ID de la tarea");
             
-            Task task = //controller
+            Task task = controller.getTaskById(id);
 
             if (task == null) {
                 showMessage("No se encontró la tarea con ID: " + id);
@@ -163,7 +163,7 @@ public class InteractiveView extends BaseView{
     public void marcarTarea(Task task) {
         try {
             task.setCompleted(!task.isCompleted());
-            //controller
+            controller.updateTask(task);
             showMessage("El estado de la tarea se actualizó correctamente.");
         } catch (Exception e) {
             showErrorMessage("Error al cambiar el estado de la tarea: " + e.getMessage());
@@ -187,7 +187,7 @@ public class InteractiveView extends BaseView{
                 task.setPriority(Integer.parseInt(nuevaPrioridad));
             }
 
-            //controller
+            controller.updateTask(task);
             showMessage("Tarea actualizada correctamente.");
         } catch (Exception e) {
             showErrorMessage("Error al modificar la tarea: " + e.getMessage());
@@ -196,7 +196,7 @@ public class InteractiveView extends BaseView{
 
     public void eliminarTarea(Task task) {
         try {
-            //controller
+            controller.deleteTask(task);
             showMessage("Tarea eliminada con éxito.");
         } catch (Exception e) {
             showErrorMessage("Error al eliminar la tarea: " + e.getMessage());
@@ -213,8 +213,7 @@ public class InteractiveView extends BaseView{
             String fileName = "output." + formato;
             String filePath = homePath + "/" + fileName;
 
-            //controller
-
+            controller.exportTasks(formato, filePath);
             showMessage("Tareas exportadas exitosamente en " + filePath);
         } catch (Exception e) {
             showErrorMessage("Error al exportar tareas: " + e.getMessage());
@@ -231,8 +230,7 @@ public class InteractiveView extends BaseView{
             String fileName = "output." + formato;
             String filePath = homePath + "/" + fileName;
 
-            //controller
-
+            controller.importTasks(formato, filePath);
             showMessage("Tareas importadas exitosamente en " + filePath);
         } catch (Exception e) {
             showErrorMessage("Error al importar tareas: " + e.getMessage());
