@@ -7,7 +7,7 @@ import java.util.List;
 import model.exceptions.RepositoryException;
 
 public class BinaryRepository implements IRepository {
-    private static final String FILE_PATH = System.getProperty("user.home") + "/tasks.bin";
+    private static final String FILE_PATH = System.getProperty("user.home");
     private List<Task> tasks = new ArrayList<>();
 
     @Override
