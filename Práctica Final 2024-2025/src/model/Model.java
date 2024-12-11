@@ -1,10 +1,9 @@
 package model;
 
-import model.exceptions.RepositoryException;
-
 import java.util.List;
 
 import model.exceptions.ExporterException;
+import model.exceptions.RepositoryException;
 
 public class Model {
     private final IRepository repository;
