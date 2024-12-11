@@ -59,12 +59,9 @@ public class Controller {
 
     private model.IExporter getExporter(String format) throws ExporterException {
         return switch (format.toLowerCase()) {
-            case "json":
-                new model.JSONExporter();
-            case "csv":
-                new model.CSVExporter();
-            default:
-                throw new ExporterException("Formato de exportación no soportado: " + format);
+            case "json" -> new model.JSONExporter();
+            case "csv" -> new model.CSVExporter();
+            default -> throw new ExporterException("Formato de exportación no soportado: " + format);
         };
     }
 
