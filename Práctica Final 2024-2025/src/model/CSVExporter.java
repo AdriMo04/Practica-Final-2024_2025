@@ -10,7 +10,7 @@ public class CSVExporter implements IExporter {
     private static final String delimitador = ",";
 
     @Override
-    public void export(List<Task> tasks, String filePath) throws ExporterException {
+    public void exportTasks(List<Task> tasks, String filePath) throws ExporterException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             for (Task task : tasks) {
                 writer.write(String.format("%d%s%s%s%s%s%d%s%d%s%b", 

@@ -18,7 +18,7 @@ public class JSONExporter implements IExporter{
     }
 
     @Override
-    public void export(List<Task> tasks, String filePath) throws ExporterException {
+    public void exportTasks(List<Task> tasks, String filePath) throws ExporterException {
         try (FileWriter writer = new FileWriter(filePath)) {
             gson.toJson(tasks, writer);
         } catch (IOException e) {
