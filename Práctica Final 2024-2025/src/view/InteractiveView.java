@@ -131,7 +131,7 @@ public class InteractiveView extends BaseView{
         System.out.println("\nDetalle de tarea:");
 
         try {
-            int id = Esdia.readInt("Ingrese el ID de la tarea");
+            int id = Esdia.readInt("Ingrese el ID de la tarea: ");
             
             Task task = controller.getTaskById(id);
 
