@@ -73,7 +73,7 @@ public class InteractiveView extends BaseView{
 
     @Override
     public void end() {
-        System.out.println("Saliendo de la aplicación interactiva. ¿Nos vemos!");
+        System.out.println("Saliendo de la aplicación interactiva. ¡Nos vemos!");
     }
 
     // Métodos:
