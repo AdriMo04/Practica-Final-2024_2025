@@ -34,18 +34,25 @@ public class InteractiveView extends BaseView{
             switch (opcion) {
                 case 1:
                     crearTarea();
+                    break;
                 case 2:
                     listarTareasPendientes();
+                    break;
                 case 3:
                     listarHistorialCompleto();
+                    break;
                 case 4:
                     detallarTarea();
+                    break;
                 case 5:
                     exportarTarea();
+                    break;
                 case 6:
                     importarTarea();
+                    break;
                 case 7:
                     exit = true;
+                    break;
                 default:
                     System.out.println("Opción no válida. Prueba con otra opción.");
             }
@@ -146,12 +153,16 @@ public class InteractiveView extends BaseView{
             switch (opcion) {
                 case 1:
                     marcarTarea(task);
+                    break;
                 case 2:
                     modificarTarea(task);
+                    break;
                 case 3:
                     eliminarTarea(task);
+                    break;
                 case 4:
                     System.out.println("Regresando al menú principal...");
+                    break;
                 default:
                     System.out.println("Opción no válida.");
             }
