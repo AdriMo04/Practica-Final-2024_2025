@@ -41,11 +41,11 @@ public class Model {
         exporter.exportTasks(tasks, filePath);
     }
 
-    public List<Task> importTasks() throws ExporterException {
+    public List<Task> importTasks(String filePath) throws ExporterException {
         if (exporter == null) {
             throw new ExporterException("No se ha configurado un exportador.");
         }
 
-        return exporter.importTasks(null);
+        return exporter.importTasks(filePath);
     }
 }

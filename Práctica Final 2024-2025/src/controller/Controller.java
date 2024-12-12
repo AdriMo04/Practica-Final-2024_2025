@@ -67,7 +67,7 @@ public class Controller {
 
     public void importTasks(String format, String filePath) throws ExporterException {
         model.setExporter(getExporter(format));
-        List<Task> tasks = model.importTasks();
+        List<Task> tasks = model.importTasks(filePath);
 
         for (Task task : tasks) {
             try {
