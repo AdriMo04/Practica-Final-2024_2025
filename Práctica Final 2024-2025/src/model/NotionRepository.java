@@ -18,6 +18,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import model.exceptions.RepositoryException;
+
 
 /**
  * 
@@ -30,7 +32,7 @@ import java.util.Map;
  * 
  * 
  */
-public class NotionRepository {
+public class NotionRepository implements IRepository {
 
     private final NotionClient client;
     private final String databaseId;
@@ -58,7 +60,8 @@ public class NotionRepository {
     }
 
     // Crear un registro en la base de datos
-    public String createRecord(Task task) {
+    @Override
+    public void addTask(Task task) throws RepositoryException {
 
         System.out.println("Creando una nueva página...");
         // Crear las propiedades de la página
@@ -90,11 +93,12 @@ public class NotionRepository {
         // que se utilizará como clave primaria unica
         // Sin embargo es necesario para actualizar o eliminar registros
         System.out.println("Página creada con ID (interno Notion)" + response.getId());
-        return response.getId();
+        return;
     }
 
     // Obtener todos los registros
-    public List<Task> getAllRecords() {
+    @Override
+    public List<Task> getAllTasks() throws RepositoryException {
         List<Task> tasks = new ArrayList<>();
         try {
             // Crear la solicitud para consultar la base de datos
@@ -118,7 +122,8 @@ public class NotionRepository {
     }
 
     // Actualizar un registro por Identifier
-    public void updateRecordByIdentifier(Task task) {
+    @Override
+    public void modifyTask(Task task) throws RepositoryException {
         try {
             String pageId = findPageIdByIdentifier(task.getIdentifier(), titleColumnName);
             if (pageId == null) {
@@ -147,7 +152,7 @@ public class NotionRepository {
     }
 
     // Eliminar (archivar) un registro por Identifier
-    public void deleteRecordByIdentifier(Task task) {
+    public void removeTask(Task task) throws RepositoryException {
         try {
             String taskId = findPageIdByIdentifier(task.getIdentifier(),titleColumnName);
             if (taskId == null) {

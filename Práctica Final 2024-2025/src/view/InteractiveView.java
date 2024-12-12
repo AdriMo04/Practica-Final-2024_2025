@@ -234,7 +234,7 @@ public class InteractiveView extends BaseView{
 
             String homePath = System.getProperty("user.home");
             String fileName = "output." + formato;
-            String filePath = homePath + "" + fileName;
+            String filePath = homePath + "\\" + fileName;
 
             File file = new File(filePath);
             if (!file.getParentFile().exists()) {
@@ -256,7 +256,7 @@ public class InteractiveView extends BaseView{
 
             String homePath = System.getProperty("user.home");
             String fileName = "output." + formato;
-            String filePath = homePath + "/" + fileName;
+            String filePath = homePath + "\\" + fileName;
 
             controller.importTasks(formato, filePath);
             showMessage("Tareas importadas exitosamente en " + filePath);
