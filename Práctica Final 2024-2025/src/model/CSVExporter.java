@@ -13,14 +13,25 @@ public class CSVExporter implements IExporter {
     public void exportTasks(List<Task> tasks, String filePath) throws ExporterException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             for (Task task : tasks) {
-                writer.write(String.format("%d%s%s%s%s%s%d%s%d%s%b", 
-                    task.getIdentifier(), delimitador,
-                    escapeCSV(task.getTitle()), delimitador,
-                    task.getDate().getTime(), delimitador,
-                    escapeCSV(task.getContent()), delimitador,
-                    task.getPriority(), delimitador,
-                    task.getEstimatedDuration(), delimitador,
-                    task.isCompleted()));
+                String title = (task.getTitle() != null) ? escapeCSV(task.getTitle()) : "";
+                String content = (task.getContent() != null) ? escapeCSV(task.getContent()) : "";
+
+                System.out.println("ID: " + task.getIdentifier());
+                System.out.println("Title: " + title);
+                System.out.println("Date (milisegundos): " + task.getDate().getTime());
+                System.out.println("Content: " + content);
+                System.out.println("Priority: " + task.getPriority());
+                System.out.println("Duration: " + task.getEstimatedDuration());
+                System.out.println("Completed: " + task.isCompleted());
+
+                writer.write(String.format("%s%s%s%s%s%s%s%s%s%s", 
+                    String.valueOf(task.getIdentifier()), delimitador,  // Convertimos el ID a String
+                    escapeCSV(task.getTitle()), delimitador,            // Título
+                    Long.toString(task.getDate().getTime()), delimitador, // Convertimos la fecha a milisegundos
+                    escapeCSV(task.getContent()), delimitador,         // Descripción
+                    String.valueOf(task.getPriority()), delimitador,    // Prioridad
+                    String.valueOf(task.getEstimatedDuration()), delimitador, // Duración
+                    String.valueOf(task.isCompleted())));              // Estado completado
                 writer.newLine();
             }
         } catch (IOException e) {
