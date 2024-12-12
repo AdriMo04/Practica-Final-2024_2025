@@ -1,3 +1,5 @@
+package app;
+
 import controller.Controller;
 import model.Model;
 import model.BinaryRepository;

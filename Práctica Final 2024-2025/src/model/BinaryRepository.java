@@ -1,13 +1,19 @@
 package model;
 
 import java.io.*;
+import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.coti.tools.Rutas;
 
 import model.exceptions.RepositoryException;
 
 public class BinaryRepository implements IRepository {
-    private static final String FILE_PATH = System.getProperty("user.home");
+    // private static final String filePath = System.getProperty("user.home") + "/tasks.bin";
+    Path rutaFichero = Rutas.pathToFileOnDesktop("tasks.bin");
+    File fichero = rutaFichero.toFile();
     private List<Task> tasks = new ArrayList<>();
 
     @Override
@@ -40,7 +46,7 @@ public class BinaryRepository implements IRepository {
     }
 
     public void save() throws RepositoryException {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_PATH))) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fichero))) {
             oos.writeObject(tasks);
         } catch (IOException e) {
             throw new RepositoryException("Error al guardar.", e);
@@ -49,7 +55,7 @@ public class BinaryRepository implements IRepository {
 
     @SuppressWarnings("unchecked")
     public void load() throws RepositoryException {
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_PATH))) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fichero))) {
             tasks = (List<Task>) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
             tasks = new ArrayList<>();
