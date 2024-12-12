@@ -2,9 +2,8 @@ package model;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.text.SimpleDateFormat;
-
 import model.exceptions.ExporterException;
 
 public class CSVExporter implements IExporter {
@@ -13,15 +12,11 @@ public class CSVExporter implements IExporter {
     @Override
     public void exportTasks(List<Task> tasks, String filePath) throws ExporterException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy, hh:mm:ss a");
-
             for (Task task : tasks) {
-                String formattedDate = dateFormat.format(task.getDate());
-
                 writer.write(String.format("%s%s%s%s%s%s%s%s%s%s%s%s%s", 
                     String.valueOf(task.getIdentifier()), delimitador,  // Convertimos el ID a String
                     escapeCSV(task.getTitle()), delimitador,            // Título
-                    formattedDate, delimitador, // Convertimos la fecha a milisegundos
+                    Long.toString(task.getDate().getTime()), delimitador, // Convertimos la fecha a milisegundos
                     escapeCSV(task.getContent()), delimitador,         // Descripción
                     String.valueOf(task.getPriority()), delimitador,    // Prioridad
                     String.valueOf(task.getEstimatedDuration()), delimitador, // Duración
@@ -37,20 +32,24 @@ public class CSVExporter implements IExporter {
     public List<Task> importTasks(String filePath) throws ExporterException {
         List<Task> tasks = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            String linea = reader.readLine();
+            String linea;
             while ((linea = reader.readLine()) != null) {
                 String[] fields = linea.split(delimitador);
-                Task task = new Task(
-                    Integer.parseInt(fields[0]),
-                    unescapeCSV(fields[1]),
-                    new java.util.Date(Long.parseLong(fields[2])),
-                    unescapeCSV(fields[3]),
-                    Integer.parseInt(fields[4]),
-                    Integer.parseInt(fields[5]),
-                    Boolean.parseBoolean(fields[5])
-                );
+                
+                if (fields.length == 7) {
+                    int id = Integer.parseInt(fields[0]);
+                    String title = unescapeCSV(fields[1]);
+                    Date date = new Date(Long.parseLong(fields[2]));
+                    String content = unescapeCSV(fields[3]);
+                    int priority = Integer.parseInt(fields[4]);
+                    int estimatedDuration = Integer.parseInt(fields[5]);
+                    boolean isCompleted = Boolean.parseBoolean(fields[6]);
 
-                tasks.add(task);
+                    Task task = new Task(id, title, date, content, priority, estimatedDuration, isCompleted);
+                    tasks.add(task);
+                } else {
+                    throw new ExporterException("La línea no tiene el formato esperado: " + linea);
+                }
             }
         } catch (IOException | NumberFormatException e) {
             throw new ExporterException("Error importando tareas desde CSV", e);
