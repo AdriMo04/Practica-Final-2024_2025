@@ -58,19 +58,20 @@ public class NotionRepository {
     }
 
     // Crear un registro en la base de datos
-    public String createRecord(Persona persona) {
+    public String createRecord(Task task) {
 
         System.out.println("Creando una nueva página...");
         // Crear las propiedades de la página
         // Las propiedades son las que se definen en la Dabase de Notion como columnas
         // Se ejemplifican varios tipos de propiedades como texto, número, fecha y casilla de verificación
         Map<String, PageProperty> properties = Map.of(
-                "Identifier", createTitleProperty(persona.getIdentifier()),
-                "Nombre", createRichTextProperty(persona.getNombre()),
-                "Apellidos", createRichTextProperty(persona.getApellidos()),
-                "Edad", createNumberProperty(persona.getEdad()),
-                "Año de Nacimiento", createDateProperty(persona.getAnoNacimiento()),
-                "Carnet de Conducir", createCheckboxProperty(persona.isCarnetDeConducir())
+                "Identifier", createTitleProperty(String.valueOf(task.getIdentifier())),
+                "Título", createRichTextProperty(task.getTitle()),
+                "Fecha", createDateProperty(formatDate(task.getDate())),
+                "Descripción", createRichTextProperty(task.getContent()),
+                "Prioridad", createNumberProperty(task.getPriority()),
+                "Duración", createNumberProperty(task.getEstimatedDuration()),
+                "Completado", createCheckboxProperty(task.isCompleted())
         );
 
         // TODO: Aquí no se tiene en cuenta el caso de que ya exista un registro con el mismo Identifier
@@ -93,8 +94,8 @@ public class NotionRepository {
     }
 
     // Obtener todos los registros
-    public List<Persona> getAllRecords() {
-        List<Persona> personas = new ArrayList<>();
+    public List<Task> getAllRecords() {
+        List<Task> tasks = new ArrayList<>();
         try {
             // Crear la solicitud para consultar la base de datos
             QueryDatabaseRequest queryRequest = new QueryDatabaseRequest(databaseId);
@@ -105,33 +106,34 @@ public class NotionRepository {
             // Procesar los resultados
             for (Page page : queryResults.getResults()) {
                 Map<String, PageProperty> properties = page.getProperties();
-                Persona persona = mapPageToPersona(page.getId(), properties);
-                if (persona != null) {
-                    personas.add(persona);
+                Task task = mapPageToTask(page.getId(), properties);
+                if (task != null) {
+                    tasks.add(task);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return personas;
+        return tasks;
     }
 
     // Actualizar un registro por Identifier
-    public void updateRecordByIdentifier(Persona persona) {
+    public void updateRecordByIdentifier(Task task) {
         try {
-            String pageId = findPageIdByIdentifier(persona.getIdentifier(), titleColumnName);
+            String pageId = findPageIdByIdentifier(task.getIdentifier(), titleColumnName);
             if (pageId == null) {
-                System.out.println("No se encontró un registro con el Identifier: " + persona.getIdentifier());
+                System.out.println("No se encontró un registro con el Identifier: " + task.getIdentifier());
                 return;
             }
 
             // Crear las propiedades actualizadas
             Map<String, PageProperty> updatedProperties = Map.of(
-                    "Nombre", createRichTextProperty(persona.getNombre()),
-                    "Apellidos", createRichTextProperty(persona.getApellidos()),
-                    "Edad", createNumberProperty(persona.getEdad()),
-                    "Año de Nacimiento", createDateProperty(persona.getAnoNacimiento()),
-                    "Carnet de Conducir", createCheckboxProperty(persona.isCarnetDeConducir())
+                    "Título", createRichTextProperty(task.getTitle()),
+                    "Fecha", createDateProperty(formatDate(task.getDate())),
+                    "Descripción", createRichTextProperty(task.getContent()),
+                    "Prioridad", createNumberProperty(task.getPriority()),
+                    "Duración", createNumberProperty(task.getEstimatedDuration()),
+                    "Completado", createCheckboxProperty(task.isCompleted())
             );
 
             // Crear la solicitud de actualización
@@ -145,24 +147,24 @@ public class NotionRepository {
     }
 
     // Eliminar (archivar) un registro por Identifier
-    public void deleteRecordByIdentifier(Persona p) {
+    public void deleteRecordByIdentifier(Task task) {
         try {
-            String pageId = findPageIdByIdentifier(p.getIdentifier(),titleColumnName);
-            if (pageId == null) {
-                System.out.println("No se encontró un registro con el Identifier: " + p.getIdentifier());
+            String taskId = findPageIdByIdentifier(task.getIdentifier(),titleColumnName);
+            if (taskId == null) {
+                System.out.println("No se encontró un registro con el Identifier: " + task.getIdentifier());
                 return;
             }
             // Archivar la página
-            UpdatePageRequest updateRequest = new UpdatePageRequest(pageId, Collections.emptyMap(), true);
+            UpdatePageRequest updateRequest = new UpdatePageRequest(taskId, Collections.emptyMap(), true);
             client.updatePage(updateRequest);
-            System.out.println("Página archivada con ID (interno Notion)" + pageId);
+            System.out.println("Página archivada con ID (interno Notion)" + taskId);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     // Buscar el ID (interno de Notion) de una página por Identifier (atributo Title de la Database de Notion)
-    private String findPageIdByIdentifier(String identifier, String titleColumnName) {
+    private String findPageIdByIdentifier(int identifier, String titleColumnName) {
         try {
             QueryDatabaseRequest queryRequest = new QueryDatabaseRequest(databaseId);
             QueryResults queryResults = client.queryDatabase(queryRequest);
@@ -190,6 +192,7 @@ public class NotionRepository {
     }
 
     // Metodos auxiliares para crear propiedades de página
+    @SuppressWarnings("unused")
     private PageProperty createRichTextProperty(String text) {
         RichText richText = new RichText();
         richText.setText(new Text(text));
@@ -198,12 +201,14 @@ public class NotionRepository {
         return property;
     }
 
+    @SuppressWarnings("unused")
     private PageProperty createNumberProperty(Integer number) {
         PageProperty property = new PageProperty();
         property.setNumber(number);
         return property;
     }
 
+    @SuppressWarnings("unused")
     private PageProperty createDateProperty(String date) {
         PageProperty property = new PageProperty();
         PageProperty.Date dateProperty = new PageProperty.Date();
@@ -219,16 +224,18 @@ public class NotionRepository {
     }
 
     // Mapeo de propiedades de Notion a un objeto Persona
-    private Persona mapPageToPersona(String pageId, Map<String, PageProperty> properties) {
+    private Task mapPageToTask(String pageId, Map<String, PageProperty> properties) {
         try {
-            Persona persona = new Persona();
-            persona.setIdentifier(properties.get("Identifier").getTitle().get(0).getText().getContent());
-            persona.setNombre(properties.get("Nombre").getRichText().get(0).getText().getContent());
-            persona.setApellidos(properties.get("Apellidos").getRichText().get(0).getText().getContent());
-            persona.setEdad(properties.get("Edad").getNumber().intValue());
-            persona.setAnoNacimiento(properties.get("Año de Nacimiento").getDate().getStart());
-            persona.setCarnetDeConducir(properties.get("Carnet de Conducir").getCheckbox());
-            return persona;
+            Task task = new Task(
+                    Integer.parseInt(properties.get("Identifier").getTitle().get(0).getText().getContent()),
+                    properties.get("Título").getRichText().get(0).getText().getContent(),
+                    parseDate(properties.get("Fecha").getDate().getStart()),
+                    properties.get("Descripción").getRichText().get(0).getText().getContent(),
+                    properties.get("Prioridad").getNumber().intValue(),
+                    properties.get("Duración").getNumber().intValue(),
+                    properties.get("Completado").getCheckbox()
+            );
+            return task;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
