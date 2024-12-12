@@ -3,6 +3,7 @@ package model;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.text.SimpleDateFormat;
 
 import model.exceptions.ExporterException;
 
@@ -12,22 +13,15 @@ public class CSVExporter implements IExporter {
     @Override
     public void exportTasks(List<Task> tasks, String filePath) throws ExporterException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy, hh:mm:ss a");
+
             for (Task task : tasks) {
-                String title = (task.getTitle() != null) ? escapeCSV(task.getTitle()) : "";
-                String content = (task.getContent() != null) ? escapeCSV(task.getContent()) : "";
+                String formattedDate = dateFormat.format(task.getDate());
 
-                System.out.println("ID: " + task.getIdentifier());
-                System.out.println("Title: " + title);
-                System.out.println("Date (milisegundos): " + task.getDate().getTime());
-                System.out.println("Content: " + content);
-                System.out.println("Priority: " + task.getPriority());
-                System.out.println("Duration: " + task.getEstimatedDuration());
-                System.out.println("Completed: " + task.isCompleted());
-
-                writer.write(String.format("%s%s%s%s%s%s%s%s%s%s", 
+                writer.write(String.format("%s%s%s%s%s%s%s%s%s%s%s%s%s", 
                     String.valueOf(task.getIdentifier()), delimitador,  // Convertimos el ID a String
                     escapeCSV(task.getTitle()), delimitador,            // Título
-                    Long.toString(task.getDate().getTime()), delimitador, // Convertimos la fecha a milisegundos
+                    formattedDate, delimitador, // Convertimos la fecha a milisegundos
                     escapeCSV(task.getContent()), delimitador,         // Descripción
                     String.valueOf(task.getPriority()), delimitador,    // Prioridad
                     String.valueOf(task.getEstimatedDuration()), delimitador, // Duración
