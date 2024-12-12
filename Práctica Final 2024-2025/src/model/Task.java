@@ -23,6 +23,10 @@ public class Task implements Serializable {
         this.completed = completed;
     }
 
+    // Constructor vacío:
+    public Task() {
+    }
+
     // Getters:
     public int getIdentifier() {
         return identifier;

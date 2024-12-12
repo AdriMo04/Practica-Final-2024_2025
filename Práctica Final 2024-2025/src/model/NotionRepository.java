@@ -67,7 +67,7 @@ public class NotionRepository {
         Map<String, PageProperty> properties = Map.of(
                 "Identifier", createTitleProperty(String.valueOf(task.getIdentifier())),
                 "Título", createRichTextProperty(task.getTitle()),
-                "Fecha", createDateProperty(formatDate(task.getDate())),
+                "Fecha", createDateProperty(task.getDate().toString()),
                 "Descripción", createRichTextProperty(task.getContent()),
                 "Prioridad", createNumberProperty(task.getPriority()),
                 "Duración", createNumberProperty(task.getEstimatedDuration()),
@@ -129,7 +129,7 @@ public class NotionRepository {
             // Crear las propiedades actualizadas
             Map<String, PageProperty> updatedProperties = Map.of(
                     "Título", createRichTextProperty(task.getTitle()),
-                    "Fecha", createDateProperty(formatDate(task.getDate())),
+                    "Fecha", createDateProperty(task.getDate().toString()),
                     "Descripción", createRichTextProperty(task.getContent()),
                     "Prioridad", createNumberProperty(task.getPriority()),
                     "Duración", createNumberProperty(task.getEstimatedDuration()),
@@ -192,7 +192,6 @@ public class NotionRepository {
     }
 
     // Metodos auxiliares para crear propiedades de página
-    @SuppressWarnings("unused")
     private PageProperty createRichTextProperty(String text) {
         RichText richText = new RichText();
         richText.setText(new Text(text));
@@ -201,14 +200,12 @@ public class NotionRepository {
         return property;
     }
 
-    @SuppressWarnings("unused")
     private PageProperty createNumberProperty(Integer number) {
         PageProperty property = new PageProperty();
         property.setNumber(number);
         return property;
     }
 
-    @SuppressWarnings("unused")
     private PageProperty createDateProperty(String date) {
         PageProperty property = new PageProperty();
         PageProperty.Date dateProperty = new PageProperty.Date();
@@ -226,15 +223,14 @@ public class NotionRepository {
     // Mapeo de propiedades de Notion a un objeto Persona
     private Task mapPageToTask(String pageId, Map<String, PageProperty> properties) {
         try {
-            Task task = new Task(
-                    Integer.parseInt(properties.get("Identifier").getTitle().get(0).getText().getContent()),
-                    properties.get("Título").getRichText().get(0).getText().getContent(),
-                    parseDate(properties.get("Fecha").getDate().getStart()),
-                    properties.get("Descripción").getRichText().get(0).getText().getContent(),
-                    properties.get("Prioridad").getNumber().intValue(),
-                    properties.get("Duración").getNumber().intValue(),
-                    properties.get("Completado").getCheckbox()
-            );
+            Task task = new Task();
+            task.setIdentifier(Integer.parseInt(properties.get("Identifier").getTitle().get(0).getText().getContent()));
+            task.setTitle(properties.get("Título").getRichText().get(0).getText().getContent());
+            task.setDate(java.sql.Date.valueOf(properties.get("Fecha").getDate().getStart()));
+            task.setContent(properties.get("Descripción").getRichText().get(0).getText().getContent());
+            task.setPriority(properties.get("Prioridad").getNumber().intValue());
+            task.setEstimatedDuration(properties.get("Duración").getNumber().intValue());
+            task.setCompleted(properties.get("Completado").getCheckbox());
             return task;
         } catch (Exception e) {
             e.printStackTrace();

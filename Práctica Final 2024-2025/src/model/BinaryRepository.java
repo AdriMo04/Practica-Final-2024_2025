@@ -11,7 +11,6 @@ import com.coti.tools.Rutas;
 import model.exceptions.RepositoryException;
 
 public class BinaryRepository implements IRepository {
-    // private static final String filePath = System.getProperty("user.home") + "/tasks.bin";
     Path rutaFichero = Rutas.pathToFileOnDesktop("tasks.bin");
     File fichero = rutaFichero.toFile();
     private List<Task> tasks = new ArrayList<>();
