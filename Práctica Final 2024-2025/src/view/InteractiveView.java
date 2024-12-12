@@ -5,6 +5,8 @@ import com.coti.tools.Esdia;
 import controller.Controller;
 import model.Task;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -97,7 +99,7 @@ public class InteractiveView extends BaseView{
 
     public void listarTareasPendientes() {
         StringBuilder output = new StringBuilder();
-        output.append("\nTareas pendientes (ordenadas por prioridad):");
+        output.append("\nTareas pendientes (ordenadas por prioridad):\n");
 
         try {
             List<Task> tasks = controller.getPendingTasks();
@@ -226,15 +228,24 @@ public class InteractiveView extends BaseView{
         try {
             String formato = Esdia.readString("Formato (json/csv): ");
 
+            if (!formato.equals("json") && !formato.equals("csv")) {
+                throw new IllegalArgumentException("Formato no válido. Debe ser 'json' o 'csv'.");
+            }
+
             String homePath = System.getProperty("user.home");
             String fileName = "output." + formato;
             String filePath = homePath + "/" + fileName;
+
+            File file = new File(filePath);
+            if (!file.getParentFile().exists()) {
+                throw new IOException("La carpeta de destino no existe.");
+            }
 
             controller.exportTasks(formato, filePath);
             showMessage("Tareas exportadas exitosamente en " + filePath);
         } catch (Exception e) {
             showErrorMessage("Error al exportar tareas: " + e.getMessage());
-        }
+        } 
     }
 
     public void importarTarea() {
