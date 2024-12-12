@@ -96,7 +96,8 @@ public class InteractiveView extends BaseView{
     }
 
     public void listarTareasPendientes() {
-        System.out.println("\nTareas pendientes (ordenadas por prioridad):");
+        StringBuilder output = new StringBuilder();
+        output.append("\nTareas pendientes (ordenadas por prioridad):");
 
         try {
             List<Task> tasks = controller.getPendingTasks();
@@ -104,15 +105,18 @@ public class InteractiveView extends BaseView{
             if (tasks.isEmpty()) {
                 showMessage("No hay tareas pendientes.");
             } else {
-                tasks.forEach(System.out::println);
+                tasks.forEach(task -> output.append(task.toString()).append("\n"));
             }
         } catch (Exception e) {
             showErrorMessage("Error al listar las tareas pendientes: " + e.getMessage());
         }
+
+        System.out.println(output.toString());
     }
 
     public void listarHistorialCompleto() {
-        System.out.println("\nHistorial completo de tareas:");
+        StringBuilder output = new StringBuilder();
+        output.append("\nHistorial completo de tareas:");
 
         try {
             List<Task> tasks = controller.getAllTasks();
@@ -120,11 +124,13 @@ public class InteractiveView extends BaseView{
             if (tasks.isEmpty()) {
                 showMessage("No hay tareas registradas.");
             } else {
-                tasks.forEach(System.out::println);
+                tasks.forEach(task -> output.append(task.toString()).append("\n"));
             }
         } catch (Exception e) {
             showErrorMessage("Error al listar todas las tareas: " + e.getMessage());
         }
+
+        System.out.println(output.toString());
     }
 
     public void detallarTarea() {

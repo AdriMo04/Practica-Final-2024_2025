@@ -1,9 +1,9 @@
 package model;
 
-import java.io.Serializable;
 import java.util.Date;
+import java.io.Serializable;
 
-public class Task implements Serializable{
+public class Task implements Serializable {
     private int identifier;
     private String title;
     private Date date;
@@ -80,5 +80,10 @@ public class Task implements Serializable{
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
+    }
+
+    @Override
+    public String toString() {
+        return identifier + " " + title + " " + date + " " + content + " " + priority + " " + estimatedDuration + " " + completed;
     }
 }
