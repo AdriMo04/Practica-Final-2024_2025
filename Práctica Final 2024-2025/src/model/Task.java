@@ -4,6 +4,7 @@ import java.util.Date;
 import java.io.Serializable;
 
 public class Task implements Serializable {
+    private static int nextId = 0;
     private int identifier;
     private String title;
     private Date date;
@@ -15,6 +16,17 @@ public class Task implements Serializable {
     // Constructor:
     public Task(int identifier, String title, Date date, String content, int priority, int estimatedDuration, boolean completed) {
         this.identifier = identifier;
+        this.title = title;
+        this.date = date;
+        this.content = content;
+        this.priority = priority;
+        this.estimatedDuration = estimatedDuration;
+        this.completed = completed;
+    }
+
+    // Constructor para crear tareas:
+    public Task(String title, Date date, String content, int priority, int estimatedDuration, boolean completed) {
+        this.identifier = nextId++;  // Asigna el ID y luego incrementa el contador
         this.title = title;
         this.date = date;
         this.content = content;

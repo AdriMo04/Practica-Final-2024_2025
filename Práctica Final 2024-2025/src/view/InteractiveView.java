@@ -88,7 +88,7 @@ public class InteractiveView extends BaseView{
             int prioridad = Esdia.readInt("Prioridad (1-5): ");
             int duracion = Esdia.readInt("Duración estimada (minutos): ");
             
-            Task task = new Task (0, titulo, new Date(), descripcion, prioridad, duracion, false);
+            Task task = new Task (titulo, new Date(), descripcion, prioridad, duracion, false);
             controller.addTask(task);
 
             showMessage("Tarea creada con éxito.");
