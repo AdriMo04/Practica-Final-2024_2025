@@ -47,9 +47,15 @@ public class BinaryRepository implements IRepository {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public void load() throws RepositoryException {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_PATH))) {
-            tasks = (List<Task>) ois.readObject();
+            Object readObject = ois.readObject();
+        if (readObject instanceof List<?>) {
+            tasks = (List<Task>) readObject; // Sigue siendo unchecked, pero sabes que es una List
+        } else {
+            throw new RepositoryException("El archivo no contiene una lista válida de tareas.");
+        }
         } catch (IOException | ClassNotFoundException e) {
             tasks = new ArrayList<>();
         }
