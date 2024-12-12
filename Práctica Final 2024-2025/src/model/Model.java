@@ -33,12 +33,12 @@ public class Model {
         return repository.getAllTasks();
     }
 
-    public void exportTasks(List<Task> tasks) throws ExporterException {
+    public void exportTasks(List<Task> tasks, String filePath) throws ExporterException {
         if (exporter == null) {
             throw new ExporterException("No se ha configurado un exportador.");
         }
 
-        exporter.exportTasks(tasks, null);
+        exporter.exportTasks(tasks, filePath);
     }
 
     public List<Task> importTasks() throws ExporterException {

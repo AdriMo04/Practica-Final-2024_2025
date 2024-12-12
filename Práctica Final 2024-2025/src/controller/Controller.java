@@ -54,7 +54,7 @@ public class Controller {
     public void exportTasks(String format, String filePath) throws ExporterException, RepositoryException {
         model.setExporter(getExporter(format));
         List<Task> tasks = model.getAllTasks();
-        model.exportTasks(tasks);
+        model.exportTasks(tasks, filePath);
     }
 
     private model.IExporter getExporter(String format) throws ExporterException {
