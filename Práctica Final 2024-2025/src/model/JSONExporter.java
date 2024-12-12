@@ -2,6 +2,8 @@ package model;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -41,11 +43,9 @@ public class JSONExporter implements IExporter{
         
         List<Task> tasks = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                Task task = gson.fromJson(line, Task.class);
-                tasks.add(task);
-            }
+            Gson gson = new Gson();
+            Type listType = new TypeToken<List<Task>>() {}.getType();
+            tasks = gson.fromJson(reader, listType);
         } catch (IOException e) {
             throw new ExporterException("Error importando tareas desde JSON: " + e.getMessage(), e);
         }
