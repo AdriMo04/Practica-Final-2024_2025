@@ -116,7 +116,7 @@ public class InteractiveView extends BaseView{
 
     public void listarHistorialCompleto() {
         StringBuilder output = new StringBuilder();
-        output.append("\nHistorial completo de tareas:");
+        output.append("\nHistorial completo de tareas:\n");
 
         try {
             List<Task> tasks = controller.getAllTasks();
